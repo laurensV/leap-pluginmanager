@@ -1,4 +1,7 @@
-<!-- TODO: add https://github.com/drvic10k/bootstrap-sortable -->
+<?php 
+printr($output);
+?>
+     <!-- TODO: add https://github.com/drvic10k/bootstrap-sortable -->
 <div class="table-searchable">
     <div class="input-group"> <span class="input-group-addon">Search</span>
         <input autofocus type="text" class="form-control search-table" placeholder="search for plugins..">

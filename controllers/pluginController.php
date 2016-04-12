@@ -1,5 +1,37 @@
 <?php
-require_once $this->plugin_manager->getPath("admin") . "/controllers/AdminController.php";
+
+use Composer\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\StreamOutput;
+
+    /*public static function dump() {
+        $composer_file = ROOT . 'composer.json';
+        if (file_exists($composer_file)) {
+            $composer_json = json_decode(file_get_contents($composer_file), true);
+            return $composer_json['require'];
+        } else {
+            return array();
+        }
+    }*/
+
+    /*protected static function createComposerJson($packages) {
+        $composer_json = str_replace("\/", '/', json_encode(array(
+            'config' => array('vendor-dir' => "libraries"),
+            'require' => $packages,
+            //
+            // TODO:
+            // windowsazure requires PEAR repository
+            //
+            'repositories' => array(array(
+                'type' => 'pear',
+                'url' => 'http://pear.php.net'
+            )),
+            'preferred-install' => 'dist'
+        )));
+        return file_put_contents(storage_dir() . 'composer.json', $composer_json);
+    }*/
+
+use Leap\Plugins\Admin\Controllers\AdminController;
 
 class pluginController extends AdminController
 {
@@ -22,6 +54,30 @@ class pluginController extends AdminController
             }
         }
         $this->set('plugins', $plugins);
+        $this->composerRequire("twig/twig");
+    }
+
+    public function composerRequire($package) {
+        ini_set('memory_limit', '512M');
+        // Don't proceed if packages haven't changed.
+        //if ($packages == $this->dump()) { return false; }
+        putenv('COMPOSER_HOME=' . ROOT . 'libraries/composer/composer');
+        //$this->createComposerJson($packages);
+        chdir(ROOT);
+        // Setup composer output formatter
+        $stream = fopen('php://temp', 'w+');
+        $output = new StreamOutput($stream);
+        // Programmatically run `composer install`
+        $application = new Application();
+        $application->setAutoExit(false);
+        $code = $application->run(new ArrayInput(array('command' => 'require', 'packages' => array($package))), $output);
+        // remove composer.lock
+        // if (file_exists(ROOT . 'composer.lock')) {
+        //     unlink(ROOT . 'composer.lock');
+        // }
+        // rewind stream to read full contents
+        rewind($stream);
+        $this->set('output',stream_get_contents($stream));
     }
 
     public function enablePlugin($plugin = null, $checkDependencies = true)
