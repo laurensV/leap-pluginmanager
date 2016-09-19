@@ -1,8 +1,10 @@
 <?php
+namespace Leap\Plugins\Plugin_manager\Controllers;
 
-use Composer\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\StreamOutput;
+use \Leap\Plugins\Admin\Controllers\AdminController;
+use \Composer\Console\Application;
+use \Symfony\Component\Console\Input\ArrayInput;
+use \Symfony\Component\Console\Output\StreamOutput;
 
     /*public static function dump() {
         $composer_file = ROOT . 'composer.json';
@@ -31,7 +33,6 @@ use Symfony\Component\Console\Output\StreamOutput;
         return file_put_contents(storage_dir() . 'composer.json', $composer_json);
     }*/
 
-use Leap\Plugins\Admin\Controllers\AdminController;
 
 class pluginController extends AdminController
 {
@@ -54,7 +55,8 @@ class pluginController extends AdminController
             }
         }
         $this->set('plugins', $plugins);
-        $this->composerRequire("twig/twig");
+        //$this->composerRequire("twig/twig");
+        $this->composerUpdate();
     }
 
     public function composerRequire($package) {
@@ -71,6 +73,28 @@ class pluginController extends AdminController
         $application = new Application();
         $application->setAutoExit(false);
         $code = $application->run(new ArrayInput(array('command' => 'require', 'packages' => array($package))), $output);
+        // remove composer.lock
+        // if (file_exists(ROOT . 'composer.lock')) {
+        //     unlink(ROOT . 'composer.lock');
+        // }
+        // rewind stream to read full contents
+        rewind($stream);
+        $this->set('output',stream_get_contents($stream));
+    }
+    public function composerUpdate() {
+        ini_set('memory_limit', '512M');
+        // Don't proceed if packages haven't changed.
+        //if ($packages == $this->dump()) { return false; }
+        putenv('COMPOSER_HOME=' . ROOT . 'libraries/composer/composer');
+        //$this->createComposerJson($packages);
+        chdir(ROOT);
+        // Setup composer output formatter
+        $stream = fopen('php://temp', 'w+');
+        $output = new StreamOutput($stream);
+        // Programmatically run `composer update`
+        $application = new Application();
+        $application->setAutoExit(false);
+        $code = $application->run(new ArrayInput(array('command' => 'update')), $output);
         // remove composer.lock
         // if (file_exists(ROOT . 'composer.lock')) {
         //     unlink(ROOT . 'composer.lock');
@@ -110,7 +134,7 @@ class pluginController extends AdminController
                         $message = "Plugin <b>" . $this->plugin_manager->all_plugins[$plugin]['name'] . "</b> successfully enabled.";
                     } else {
                         $error = "Could not enable plugin <b>" . $this->plugin_manager->all_plugins[$plugin]['name'] . "</b>.<br>";
-                        $info  = "As you have no database connection, you can also try to enable plugin manually by changing the .disabled file to .info";
+                        $info  = "As you have no database connection, you can also try to enable plugin manually by changing the [plugin].disabled file to [plugin].info";
                     }
                 }
             } else {
