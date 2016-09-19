@@ -1,5 +1,5 @@
 <?php 
-printr($output);
+printr($output, false);
  ?>
 <!-- TODO: add https://github.com/drvic10k/bootstrap-sortable -->
 <div class="table-searchable">

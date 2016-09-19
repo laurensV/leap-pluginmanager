@@ -1,5 +1,5 @@
 <?php
-namespace Leap\Plugins\Plugin_manager\Controllers;
+namespace Leap\Plugins\PluginManager\Controllers;
 
 use \Leap\Plugins\Admin\Controllers\AdminController;
 use \Composer\Console\Application;
@@ -56,7 +56,7 @@ class pluginController extends AdminController
         }
         $this->set('plugins', $plugins);
         //$this->composerRequire("twig/twig");
-        $this->composerUpdate();
+        //$this->composerUpdate();
     }
 
     public function composerRequire($package) {
