@@ -4,6 +4,7 @@ include_slash = true
 
 ['admin/plugins']
 action = getPlugins
+page = pages/plugins.php
 scripts[] = scripts/searchable_table.js
 
 [admin/plugins/enable]

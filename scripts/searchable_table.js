@@ -13,7 +13,7 @@ $(document).ready(function () {
             table.find('tbody tr').hide();
             var any_results = false;
             table.find('tbody tr:not(.no-results)').filter(function () {
-                value_of_searchables = $(this).find('.searchable').map(function () { return $( this ).text(); }).get()
+                value_of_searchables = $(this).find('.searchable').map(function () { return $( this ).text(); }).get();
                 if(rex.test(value_of_searchables)){
                     any_results = true;
                     return true;
