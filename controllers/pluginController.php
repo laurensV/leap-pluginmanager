@@ -39,8 +39,8 @@ class pluginController extends AdminController
     public function getPlugins()
     {
         $plugins = array();
-        if ($this->model->hasConnection()) {
-            $stmt    = $this->model->query("SELECT * FROM plugins");
+        if ($this->hasConnection()) {
+            $stmt    = $this->pdo->query("SELECT * FROM plugins");
             $plugins = $stmt->fetchAll();
         } else {
             foreach ($this->plugin_manager->all_plugins as $plugin => $path) {
@@ -119,10 +119,10 @@ class pluginController extends AdminController
                 }
             }
             if (isset($this->plugin_manager->all_plugins[$plugin])) {
-                if ($this->model->hasConnection()) {
+                if ($this->hasConnection()) {
                     $sql = "UPDATE plugins SET status=1 WHERE pid= ? ";
                     // Perform Query
-                    $stmt = $this->model->run($sql, [$plugin]);
+                    $stmt = $this->pdo->run($sql, [$plugin]);
                     if ($stmt->rowCount()) {
                         $message = "Plugin <b>" . $this->plugin_manager->all_plugins[$plugin]['name'] . "</b> successfully enabled.";
                     } else {
@@ -172,10 +172,10 @@ class pluginController extends AdminController
                     return;
                 }
             }
-            if ($this->model->hasConnection()) {
+            if ($this->hasConnection()) {
                 $sql = "UPDATE plugins SET status=0 WHERE pid= ? ";
                 // Perform Query
-                $stmt = $this->model->run($sql, [$plugin]);
+                $stmt = $this->pdo->run($sql, [$plugin]);
                 if ($stmt->rowCount()) {
                     $message = "Plugin <b>" . $this->plugin_manager->all_plugins[$plugin]['name'] . "</b> successfully disabled.";
                 } else {
