@@ -1,5 +1,5 @@
 {
-    "name": "leap/pluginmanager",
+    "name": "leap-plugin/pluginmanager",
     "description": "Plugin manager plugin for Leap framework",
     "type": "leap-plugin",
     "license": "GPL-2.0+"
